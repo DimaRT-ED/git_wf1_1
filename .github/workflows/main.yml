@@ -19,3 +19,7 @@ jobs:
           ls -la
           pwd
           echo "HI !"
+
+      - uses: actions/checkout@v3
+
+      - run: ls -la
