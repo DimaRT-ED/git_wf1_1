@@ -1,0 +1,44 @@
+name: Work with environments
+env:
+  APP_NAME: "${{ github.repository }}-TEST-APP"
+  OWNER: "Dima"
+on:
+  push:
+    branches:
+      - master
+
+  workflow_dispatch:
+
+jobs:
+  deployAWS:
+    runs-on: ubuntu-latest
+    env:
+      PACKAGE_NAME: "${{ github.repository }}-TEST-APP-${{ github.sha }}.zip"
+      BUCKET_NAME: "rt-sadna-git"
+      AWS_REGION: "il-central-1"
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+
+      - name: Check folder
+        run: |
+          ls -la
+          aws --version
+
+      - name: Print Secrets
+        run: |
+          echo "aws access key :  ${{ secrets.AWS_ACCESS_KEY_ID }}"
+          echo "aws secret key : ${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Create package
+        run: zip -r ${{ env.PACKAGE_NAME }}  ./ -x  *.git*
+
+      - name: Send package
+        run: aws s3 cp ${{ env.PACKAGE_NAME }}   s3://${{ env.BUCKET_NAME }}/
