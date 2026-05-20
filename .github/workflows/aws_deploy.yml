@@ -13,7 +13,7 @@ jobs:
   deployAWS:
     runs-on: ubuntu-latest
     env:
-      PACKAGE_NAME: "${{ github.repository }}-TEST-APP-${{ github.sha }}.zip"
+      PACKAGE_NAME: "TEST-APP-${{ github.sha }}.zip"
       BUCKET_NAME: "rt-sadna-git"
       AWS_REGION: "il-central-1"
     steps:
